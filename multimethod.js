@@ -34,9 +34,9 @@
     };
 
     var multimethod = function(project) { 
-        var _project  = project || identity;
-        var _methods   = [];
-        var _default   = noop;
+        var _project,
+            _methods   = [],
+            _default   = noop;
 
         var _lookup    = function() {
             var criteria    = _project.apply(this, arguments),
@@ -54,9 +54,16 @@
         };
 
         returnFn.project = function(project) {
-            _project = project;
+            if(_.isFunction(project)) {
+                _project = project;
+            } else if(_.isString(project)) {
+                _project = function(object) {
+                    return object[project];
+                }
+            }
             return this;
         }
+        returnFn.project(project || identity);
 
         returnFn.when = function(value, method) {
             var index = indexOf(value, _methods);

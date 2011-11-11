@@ -73,4 +73,18 @@ $(document).ready(function() {
                     .remove(1);
         equals(mm(1),2);
     });
+
+    test("pluck string projection", function() {
+        var bornOn = multimethod('type')
+                        .when('person',function(person) { return person.yearBorn; })
+                        .when('car', function(car) { return car.yearBuilt; })
+        equals(bornOn({'type':'person','yearBorn':1985}), 1985);
+        equals(bornOn({'type':'car','yearBuilt':2000}), 2000);
+    });
+
+    test("pluck undefined property", function() {
+        var pluckMM = multimethod('type')
+                        .default(1);
+        equals(pluckMM({}),1);
+    }); 
 });
