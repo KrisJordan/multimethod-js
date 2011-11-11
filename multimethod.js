@@ -78,7 +78,7 @@
         returnFn.remove = function(value) {
             var index = indexOf(value, _methods);
             if(index !== false) {
-                _methods.splice(index,1);
+                _methods.splice(index, 1);
             }
             return this;
         }
