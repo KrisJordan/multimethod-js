@@ -1,0 +1,17 @@
+{
+  "author": "Kris Jordan <krisjordan@gmail.com> (http://krisjordan.com)",
+  "name": "mutimethod-js",
+  "description": "Multimethods for JavaScript",
+  "version": "0.0.1",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/KrisJordan/multimethod-js.git"
+  },
+  "engines": {
+    "node": "~0.6.0"
+  },
+  "dependencies": {
+    "underscore": "1.2.1"
+  },
+  "devDependencies": {}
+}
