@@ -1,4 +1,4 @@
-Simple multimethod-like functionality for JavaScript.
+Simple multimethod-like functionality for JavaScript inspired by Clojure.
 
 Example usage:
 
@@ -29,12 +29,16 @@ Example usage:
                         .when(1,"one");
   console.log(oneToString(1)); // "one"
 
-multimethod's methods:
+multimethod instance methods:
 
 - constructor( [fn | string] ): If empty, identity projection used, otherwise same as project.
+
 - project(fn | string): Sets the multimethod's projection function. String values are transformed into a pluck function which projects a single property from an object argument.
+
 - when(match, fn | value): Add a method when the projected value matches 'match'. If a non-function value is provided it will be used. Using the same match value twice will override previously set match value and method.
+
 - remove(match): Remove a method/match pair.
+
 - default(fn | value): Catch-all case when no other matched method is found.
 
 Dependencies:
