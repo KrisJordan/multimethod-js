@@ -96,6 +96,7 @@
     if (typeof exports !== 'undefined') {
         if (typeof module !== 'undefined' && module.exports) {
             exports = module.exports = multimethod;
+            var _ = require('underscore');
         }
         exports.multimethod = multimethod;
     } else if (typeof define === 'function' && define.amd) {
