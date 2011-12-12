@@ -122,9 +122,9 @@ really dangerous. Don't shoot your eye out.
 
 # API
 
-- Constructor: `multimethod`( [fn | string] ):  If empty, identity projection used, otherwise same as project.
-- `project`(fn | string): Sets the multimethod's projection function. String values are transformed into a pluck function which projects a single property from an object argument.
-- `when`(match, fn | value): Add a method when the projected value matches 'match'. If a non-function value is provided it will be used. Using the same match value twice will override previously set match value and method.
+- Constructor: `multimethod`( [fn | string] ):  If empty, identity dispatch function used, otherwise same as `dispatch`.
+- `dispatch`(fn | string): Sets the multimethod's dispatch function. String values are transformed into a pluck function which projects a single property from an object argument.
+- `when`(match, fn | value): Add a `method` to be called when the dispatched value matches 'match'. If a non-function value is provided it will be used. Using the same match value twice will override previously set match value and method.
 - `remove`(match): Remove a method/match pair.
 - `default`(fn | value): Catch-all case when no other matched method is found.
 
