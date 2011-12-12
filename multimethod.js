@@ -1,11 +1,25 @@
+// multimethod.js 0.0.1
+//
+// (c) 2011 Kris Jordan
+//
+// Multimethod is freely distributable under the MIT license.
+// For details and documentation: 
+// [http://krisjordan.com/multimethod-js](http://krisjordan.com/multimethod-js)
+
 (function() {
 
-    var root = this;
+    // ## Internal Utility Functions
 
+    // No operation function used by default by `default`.
     var noop = function() {};
 
+    // Identity `dispatch` function. Default value of `dispatch`.
     var identity = function(a) { return a; };
 
+    // A `method` in `multimethod` is a (match value, function) pair stored in
+    // an array. `indexOf` takes a value and array of methods and returns the 
+    // index of the method whose value is equal to the first argument. If no 
+    // match is found, false is returned.
     var indexOf = function(value, methods) {
         for(var i in methods) {
             var matches  = methods[i][0];
@@ -16,6 +30,8 @@
         return false;
     }
 
+    // Given a key value and array of methods, return the function of the method
+    // whose key corresponds
     var match = function(value, methods) {
         var index = indexOf(value, methods);
         if(index !== false) {
@@ -33,13 +49,13 @@
         }
     };
 
-    var multimethod = function(project) { 
-        var _project,
+    var multimethod = function(dispatch) { 
+        var _dispatch,
             _methods   = [],
             _default   = noop;
 
         var _lookup    = function() {
-            var criteria    = _project.apply(this, arguments),
+            var criteria    = _dispatch.apply(this, arguments),
                 method      = match(criteria, _methods);
             if(method !== false) {
                 return method;
@@ -53,17 +69,17 @@
             return toValue.call(this, method, arguments);
         };
 
-        returnFn.project = function(project) {
-            if(_.isFunction(project)) {
-                _project = project;
-            } else if(_.isString(project)) {
-                _project = function(object) {
-                    return object[project];
+        returnFn.dispatch = function(dispatch) {
+            if(_.isFunction(dispatch)) {
+                _dispatch = dispatch;
+            } else if(_.isString(dispatch)) {
+                _dispatch = function(object) {
+                    return object[dispatch];
                 }
             }
             return this;
         }
-        returnFn.project(project || identity);
+        returnFn.dispatch(dispatch || identity);
 
         returnFn.when = function(value, method) {
             var index = indexOf(value, _methods);
@@ -104,7 +120,8 @@
             return multimethod;
         });
     } else {
-        root['multimethod'] = multimethod;
+        this['multimethod'] = multimethod;
+        var _ = this['_'];
     }
 
     multimethod.version = '0.0.1';

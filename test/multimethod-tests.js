@@ -13,12 +13,12 @@ $(document).ready(function() {
         equals(mm(1), undefined);
     });
 
-    test("identity project function", function() {
+    test("identity dispatch function", function() {
         var mm = multimethod().when(1,helpers.plus1);
         equals(mm(1),2);
     });
 
-    test("default project function", function() {
+    test("default dispatch function", function() {
         var mm = multimethod().default(helpers.plus1);
         equals(mm(1),2);
     });
@@ -52,9 +52,9 @@ $(document).ready(function() {
         equals(mm(3,3),9);
     });
 
-    test("modify project function", function() {
+    test("modify dispatch function", function() {
         var mm = multimethod()
-                    .project(helpers.plus1)
+                    .dispatch(helpers.plus1)
                     .when(2,helpers.plus1);
         equals(mm(1),2);
     });
@@ -74,7 +74,7 @@ $(document).ready(function() {
         equals(mm(1),2);
     });
 
-    test("pluck string projection", function() {
+    test("pluck string dispatch", function() {
         var bornOn = multimethod('type')
                         .when('person',function(person) { return person.yearBorn; })
                         .when('car', function(car) { return car.yearBuilt; })
@@ -87,4 +87,14 @@ $(document).ready(function() {
                         .default(1);
         equals(pluckMM({}),1);
     }); 
+
+    test("deep equality example", function() {
+         var greatPairs = multimethod()
+               .when( ["Salt", "Pepper"], "Shakers" )
+               .when( [ { "name": "Bonnie" }, { "name": "Clyde" } ], "Robbers" )
+               .default( "?" );
+         equals("?", greatPairs(["MJ", "Pippen"]));
+         equals("Shakers", greatPairs(["Salt", "Pepper"]));
+         equals("Robbers", greatPairs([ { "name": "Bonnie" }, { "name": "Clyde" } ]));
+    });
 });
