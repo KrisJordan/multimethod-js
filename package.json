@@ -1,6 +1,6 @@
 {
   "author": "Kris Jordan <krisjordan@gmail.com> (http://krisjordan.com)",
-  "name": "mutimethod-js",
+  "name": "mutimethod",
   "description": "Multimethods for JavaScript",
   "version": "0.0.1",
   "repository": {
