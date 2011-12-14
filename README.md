@@ -5,6 +5,38 @@ function calls with user-defined criteria that can be changed at run time.
 Inspired by clojure's multimethods, multimethod.js provides an alternative to
 classical, prototype-chain based polymorphism.
 
+# Installation
+
+Install with `npm` for use in node.js based projects.
+
+    npm install multimethod
+    node
+    > require('multimethod')
+
+For in-browser use you will need to grab 
+[underscore.js](http://documentcloud.github.com/underscore/) and multimethod.js:
+
+- underscore.js
+  - Development: http://documentcloud.github.com/underscore/underscore.js
+  - Minified: http://documentcloud.github.com/underscore/underscore-min.js
+- multimethod.js
+  - Development: https://raw.github.com/KrisJordan/multimethod-js/master/multimethod.js
+  - Minified: https://raw.github.com/KrisJordan/multimethod-js/master/multimethod-min.js
+
+# API
+
+- Constructor: `multimethod`( [fn | string] ):  If empty, identity dispatch 
+  function used, otherwise same as `dispatch`.
+- `dispatch`(fn | string): Sets the multimethod's dispatch function. String
+  values are transformed into a pluck function which projects a single
+  property from an object argument.
+- `when`(match, fn | value): Add a `method` to be called when the dispatched
+  value matches 'match'. If a non-function value is provided it will be used. 
+  Using the same match value twice will override previously set match value 
+  and method.
+- `remove`(match): Remove a method/match pair.
+- `default`(fn | value): Catch-all case when no other matched method is found.
+
 # Usage
 
 ## The Basics
@@ -120,14 +152,3 @@ run time, the `dispatch` function can also be redefined at run time.
 Ponder the implications of that for a minute. It is really powerful and 
 really dangerous. Don't shoot your eye out.
 
-# API
-
-- Constructor: `multimethod`( [fn | string] ):  If empty, identity dispatch function used, otherwise same as `dispatch`.
-- `dispatch`(fn | string): Sets the multimethod's dispatch function. String values are transformed into a pluck function which projects a single property from an object argument.
-- `when`(match, fn | value): Add a `method` to be called when the dispatched value matches 'match'. If a non-function value is provided it will be used. Using the same match value twice will override previously set match value and method.
-- `remove`(match): Remove a method/match pair.
-- `default`(fn | value): Catch-all case when no other matched method is found.
-
-# Dependencies
- 
-- Underscore.js

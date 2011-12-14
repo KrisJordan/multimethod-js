@@ -97,4 +97,13 @@ $(document).ready(function() {
          equals("Shakers", greatPairs(["Salt", "Pepper"]));
          equals("Robbers", greatPairs([ { "name": "Bonnie" }, { "name": "Clyde" } ]));
     });
+
+    test("calling dispatch throws", function() {
+        try {
+            var mm = multimethod().dispatch(1);
+            equals(true, false);
+        } catch(e) {
+            equals(true, true);
+        }
+    });
 });
