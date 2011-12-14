@@ -2,7 +2,7 @@
   "author": "Kris Jordan <krisjordan@gmail.com> (http://krisjordan.com)",
   "name": "multimethod",
   "description": "Multimethods for JavaScript",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "repository": {
     "type": "git",
     "url": "git://github.com/KrisJordan/multimethod-js.git"
