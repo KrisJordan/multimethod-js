@@ -1,9 +1,11 @@
-# Motivation
+# What is multimethod.js? 
 
-Multimethods are a functional programming control structure for dispatching 
-function calls to user-defined functions that can be manipulated dynamically.
-Inspired by clojure's multimethods, multimethod.js provides an alternative to
-classical, prototype-chain based polymorphism.
+Multimethods are a functional programming control structure that allow you
+to dynamically build-up and manipulate the dispatching behavior of a 
+polymorphic function. Inspired by clojure's multimethods, multimethod.js 
+provides a functional alternative to classical, prototype based polymorphism. 
+The multimethod.js library is 1kb minified, MIT licensed, and available on
+[GitHub](https://github.com/KrisJordan/multimethod-js).
 
 # Installation
 
@@ -11,7 +13,7 @@ Install with `npm` for use in node.js based projects.
 
     npm install multimethod
     node
-    > require('multimethod')
+    > var multimethod = require('multimethod');
 
 For in-browser use you will need to grab 
 [underscore.js](http://documentcloud.github.com/underscore/) and multimethod.js:
@@ -23,10 +25,27 @@ For in-browser use you will need to grab
   - Development: https://raw.github.com/KrisJordan/multimethod-js/master/multimethod.js
   - Minified: https://raw.github.com/KrisJordan/multimethod-js/master/multimethod-min.js
 
-# Examples
+# API
 
-In these examples we'll use the node.js REPL for building up a `multimethod` that
-calculates the area of simple shape objects.
+- Constructor: `multimethod`( [fn | string] ):  No arg constructor uses an
+  identity function for `dispatch`. Single arg constructor is a shortcut for
+  calling `dispatch` with the same argument.
+- `dispatch`(fn | string): Sets the `multimethod`'s `dispatch` function. String
+  values are transformed into a pluck function which projects a single
+  property value from the first argurment.
+- `when`(match, fn | value): Add a `method` to be invoked when the `dispatch`
+  return value matches 'match'. If a non-function `value` is provided it will
+  be returned directly. Calling `when` with the same `match` value twice will 
+  override the previously registered `method`.
+- `remove`(match): Remove a `method` by it's `match` value.
+- `default`(fn | value): Catch-all case when no `method` match is found.
+
+
+# Motivating Examples
+
+Let's use the node.js REPL to build a few multimethods and see what they are
+capable of doing. In this first example we'll create a mulimethod that
+calculates the area of shapes instantiated with object literals.
 
     > var multimethod = require('multimethod');
     > var area = multimethod()
@@ -62,12 +81,12 @@ calculates the area of simple shape objects.
     > area( aCircle );
     Unknown Shape: circle
 
-Notice how `dispatch` returns the value we'll match against a method registered
+Notice how `dispatch` returns the value we'll match to a "method" registered
 with `when`. You can introduce, overwrite, and remove new methods dynamically at
 runtime. Fallback behavior can be established with a `default` function called
 when no methods match the dispatched value.
 
-The Fibonacci function can be expressed naturally with a multimethod, too.
+A recursive Fibonacci function can be expressed naturally with a multimethod.
 
     > var fib = multimethod()
                     .when( 0, 0 )
@@ -79,7 +98,8 @@ The Fibonacci function can be expressed naturally with a multimethod, too.
     6765
 
 Notice, there is no `dispatch` specified. By default a multimethod will use
-the first argument it is invoked with to match the correct method.
+the first argument it is invoked with to match the correct method to dispatch
+to.
 
     > var hitPoints = multimethod()
                         .dispatch(function(player){ return player.powerUp; })
@@ -97,29 +117,30 @@ the first argument it is invoked with to match the correct method.
 
     > var godModeCheat = function() { return starPower; };
     > hitPoints.dispatch(godModeCheat);
+    > mario.powerUp;
+    null
     > hitPoints(mario);
     Infinity
 
 In this last example notice how we are matching against an object. Matching 
-is done using deep equality so objects, arrays, etc. are all possible to use
-as criteria.  Also notice how we can completely override our dispatch 
-function to change the criteria in which a multimethod evaluates its arguments
-(or in this case ignores them!) and matches a method.
+is done using deep equality so objects and arrays are valid method matching
+criteria.  Also notice how we can completely override our dispatch 
+function to change the logic with which a multimethod evaluates its arguments
+for dispatch, or, in this case, ignores them!
 
-# API
+# Multimethod Dispatch Algorithm Overview
 
-- Constructor: `multimethod`( [fn | string] ):  No arg constructor uses an
-  identity function for `dispatch`. Single arg constructor is a shortcut for
-  calling `dispatch` with the same argument.
-- `dispatch`(fn | string): Sets the `multimethod`'s `dispatch` function. String
-  values are transformed into a pluck function which projects a single
-  property value from the first argurment.
-- `when`(match, fn | value): Add a `method` to be invoked when the `dispatch`
-  return value matches 'match'. If a non-function `value` is provided it will
-  be returned directly. Calling `when` with the same `match` value twice will 
-  override the previously registered `method`.
-- `remove`(match): Remove a `method` by it's `match` value.
-- `default`(fn | value): Catch-all case when no `method` match is found.
+1. User calls multimethod with argument `anArgument`.
+2. Multimethod calls its `dispatch` function with `anArgument`. The returned 
+   value is stored in `dispatchValue`.
+3. Multimethod iterates through each 'method' registered with `when` and 
+   performs an equality test on the `dispatchValue` and each method's match
+   value. If a match is found, set `matchFunction` to the method's function 
+   and go to step 5.
+4. If no method match found, set `matchFunction` to the multimethod's `default`
+   function.
+5. Multimethod calls `matchFunction` with `anArgument`. The returned value
+   is returned to the user who called the multimethod.
 
 # Detailed Walkthrough
 
@@ -238,3 +259,9 @@ limited by JavaScript's === equality behavior.
           .when( [{"name":"Bonnie"}, {"name":"Clyde"}], "Robbers" );
     console.log( greatPairs( ["Salt", "Pepper"] ) ); // Shakers
 
+## How-to Contribute
+
+* Submit bugs and feature requests on 
+[GitHub Issues](https://github.com/KrisJordan/multimethod-js/issues) page.
+* Fork the repository and submit pull requests. Pull requests that update
+  the test suite for coverage on changes will be brought in quickly.
