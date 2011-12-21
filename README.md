@@ -259,6 +259,11 @@ limited by JavaScript's === equality behavior.
           .when( [{"name":"Bonnie"}, {"name":"Clyde"}], "Robbers" );
     console.log( greatPairs( ["Salt", "Pepper"] ) ); // Shakers
 
+## Related Work
+
+* Clojure's multimethod - http://clojure.org/multimethods
+* Pascal Coste Filtered Dispatch in Common Lisp - http://www.p-cos.net/documents/filtered-dispatch.pdf
+
 ## How-to Contribute
 
 * Submit bugs and feature requests on 
