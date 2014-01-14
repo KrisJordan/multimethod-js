@@ -47,39 +47,41 @@ Let's use the node.js REPL to build a few multimethods and see what they are
 capable of doing. In this first example we'll create a mulimethod that
 calculates the area of shapes instantiated with object literals.
 
-    > var multimethod = require('multimethod');
-    > var area = multimethod()
-                    .dispatch(function(o) {
-                        return o.shape;
-                    })
-                    .when("square", function(o) {
-                        return Math.pow(o.side, 2);
-                    });
-    > var aSquare = { "shape":"square", "side": 2 };
-    > area( aSquare );
-    4
+```javascript
+> var multimethod = require('multimethod');
+> var area = multimethod()
+                .dispatch(function(o) {
+                    return o.shape;
+                })
+                .when("square", function(o) {
+                    return Math.pow(o.side, 2);
+                });
+> var aSquare = { "shape":"square", "side": 2 };
+> area( aSquare );
+4
 
-    > var aCircle = { "shape":"circle", "radius": 5 };
-    > area( aCircle );
-    undefined
+> var aCircle = { "shape":"circle", "radius": 5 };
+> area( aCircle );
+undefined
 
-    > area.default(function(o) { 
-        throw "Unknown shape: " + o.shape;
-      });
-    > area( aCircle );
-    Unknown Shape: circle
+> area.default(function(o) { 
+    throw "Unknown shape: " + o.shape;
+  });
+> area( aCircle );
+Unknown Shape: circle
 
-    > area.when("circle", function(o) {
-        return Math.PI * Math.pow(o.radius, 2);
-      });
-    > area( aCircle );
-    78.53981633974483
-    > area( aSquare );
-    4
+> area.when("circle", function(o) {
+    return Math.PI * Math.pow(o.radius, 2);
+  });
+> area( aCircle );
+78.53981633974483
+> area( aSquare );
+4
 
-    > area.remove("circle");
-    > area( aCircle );
-    Unknown Shape: circle
+> area.remove("circle");
+> area( aCircle );
+Unknown Shape: circle
+```
 
 Notice how `dispatch` returns the value we'll match to a "method" registered
 with `when`. You can introduce, overwrite, and remove new methods dynamically at
@@ -88,39 +90,43 @@ when no methods match the dispatched value.
 
 A recursive Fibonacci function can be expressed naturally with a multimethod.
 
-    > var fib = multimethod()
-                    .when( 0, 0 )
-                    .when( 1, 1 )
-                    .default( function(n) {
-                        return fib(n-1) + fib(n-2);
-                    });
-    > fib(20);
-    6765
+```javascript
+> var fib = multimethod()
+                .when( 0, 0 )
+                .when( 1, 1 )
+                .default( function(n) {
+                    return fib(n-1) + fib(n-2);
+                });
+> fib(20);
+6765
+```
 
 Notice, there is no `dispatch` specified. By default a multimethod will use
 the first argument it is invoked with to match the correct method to dispatch
 to.
 
-    > var hitPoints = multimethod()
-                        .dispatch(function(player){ return player.powerUp; })
-                        .when( {"type":"star"} , Infinity)
-                        .default(5);
+```javascript
+> var hitPoints = multimethod()
+                    .dispatch(function(player){ return player.powerUp; })
+                    .when( {"type":"star"} , Infinity)
+                    .default(5);
 
-    > var starPower = { "type":"star" },
-    >     mario = { "powerUp": starPower };
-    > hitPoints(mario);
-    Infinity
+> var starPower = { "type":"star" },
+>     mario = { "powerUp": starPower };
+> hitPoints(mario);
+Infinity
 
-    > mario.powerUp = null;
-    > hitPoints(mario);
-    5
+> mario.powerUp = null;
+> hitPoints(mario);
+5
 
-    > var godModeCheat = function() { return starPower; };
-    > hitPoints.dispatch(godModeCheat);
-    > mario.powerUp;
-    null
-    > hitPoints(mario);
-    Infinity
+> var godModeCheat = function() { return starPower; };
+> hitPoints.dispatch(godModeCheat);
+> mario.powerUp;
+null
+> hitPoints(mario);
+Infinity
+```
 
 In this last example notice how we are matching against an object. Matching 
 is done using deep equality so objects and arrays are valid method matching
@@ -148,39 +154,53 @@ for dispatch, or, in this case, ignores them!
 
 A `multimethod` is instantiated with the `multimethod` function.
 
-    var stopLightColor = multimethod();
+```javascript
+var stopLightColor = multimethod();
+```
   
 A `multimethod` has methods. A `method` is has two parts, its match value
 and its implementation function. Methods are added using `when`.
 
-    stopLightColor.when("go",    function() { return "green"; })
-                  .when("stop",  function() { return "red"; });
+```javascript
+stopLightColor.when("go",    function() { return "green"; })
+              .when("stop",  function() { return "red"; });
+```
 
 You can call a `multimethod` just like any other function. It will dispatch
 based on the argument(s) passed in, invoke the matched `method`, and return 
 the results of the `method` call.
 
-    console.log( stopLightColor("go") ); // "green"
+```javascript
+console.log( stopLightColor("go") ); // "green"
+```
 
 When no method matches control can fallback to a `default` method.
 
-    stopLightColor.default( function() { return "unknown"; } );
-    console.log( stopLightColor("yield") ); // prints "unknown"
+```javascript
+stopLightColor.default( function() { return "unknown"; } );
+console.log( stopLightColor("yield") ); // prints "unknown"
+```
 
 A `multimethod` can handle new cases dynamically at run time.
 
-    stopLightColor.when("yield", function() { return "yellow"; });
+```javascript
+stopLightColor.when("yield", function() { return "yellow"; });
+```
 
 There is a shorter way for a `method` to return a plain value. Rather than 
 passing an implementation function to `when`, pass the value. 
 
-    stopLightColor.when("yield", "yellow");
-    console.log( stopLightColor("yield") ); // prints "yellow"
+```javascript
+stopLightColor.when("yield", "yellow");
+console.log( stopLightColor("yield") ); // prints "yellow"
+```
 
 A `method` can be removed dynamically at run time, too.
 
-    stopLightColor.remove("go");
-    console.log( stopLightColor("go") ); // prints "unknown"
+```javascript
+stopLightColor.remove("go");
+console.log( stopLightColor("go") ); // prints "unknown"
+```
 
 ## Dispatch Function
 
@@ -193,52 +213,60 @@ The default `dispatch` function is an identity function.
 The basic `stopLightColor` examples could have been 
 created with an explicit `dispatch` function.
 
-    var stopLightColor = multimethod()
-          .dispatch(function(state){
-             return state;
-          })
-          .when('go', 'green');
-    console.log( stopLightColor('go') ); // green
+```javascript
+var stopLightColor = multimethod()
+      .dispatch(function(state){
+         return state;
+      })
+      .when('go', 'green');
+console.log( stopLightColor('go') ); // green
+```
 
 The power of the `multimethod` paradigm is the ability to dispatch with a
 user-defined function. This gives a `multimethod` its "polymorphic" powers. 
 Unlike classical, object-oriented polymorphism where the compiler dispatches 
 based on the type hierarchy, a `multimethod` can dispatch on any criteria.
 
-    var contacts = [
-      {"name":"Jack", "service":"Twitter","handle": "@jack"},
-      {"name":"Diane","service":"Email",  "address":"d@g.com"},
-      {"name":"John", "service":"Phone",  "number": "919-919-9191"}
-    ];
+```javascript
+var contacts = [
+  {"name":"Jack", "service":"Twitter","handle": "@jack"},
+  {"name":"Diane","service":"Email",  "address":"d@g.com"},
+  {"name":"John", "service":"Phone",  "number": "919-919-9191"}
+];
 
-    var sendMessage = multimethod()
-         .dispatch(function(contact, msg) {
-           return contact.service;
-         })
-         .when("Twitter", function(contact, msg) {
-           console.log("Tweet @"+contact.handle+":"+msg);
-         })
-         .when("Email", function(contact, msg) {
-           console.log("Emailing "+contact.address+":"+msg);
-         })
-         .default(function(contact, msg) {
-           console.log("Could not message " + contact.name);
-         });
+var sendMessage = multimethod()
+     .dispatch(function(contact, msg) {
+       return contact.service;
+     })
+     .when("Twitter", function(contact, msg) {
+       console.log("Tweet @"+contact.handle+":"+msg);
+     })
+     .when("Email", function(contact, msg) {
+       console.log("Emailing "+contact.address+":"+msg);
+     })
+     .default(function(contact, msg) {
+       console.log("Could not message " + contact.name);
+     });
 
-    // Blast a message
-    contacts.forEach( function(contact) {
-      sendMessage(contact, "Hello, world."); 
-    });
+// Blast a message
+contacts.forEach( function(contact) {
+  sendMessage(contact, "Hello, world."); 
+});
+```
 
 Plucking a single property from an object is so commonly used as a `dispatch`
 function, like in the example above, there is a shortcut for this pattern. 
 The following `dispatch` call is equivalent to above.
 
-    sendMessage.dispatch( 'service' );
+```javascript
+sendMessage.dispatch( 'service' );
+```
 
 A `multimethod`'s `dispatch` is usually specified when constructed.
 
-    var sendMessage = multimethod('service');
+```javascript
+var sendMessage = multimethod('service');
+```
 
 Just like `method`s can be added and removed from a `multimethod` at 
 run time, the `dispatch` function can also be redefined at run time.
@@ -254,10 +282,12 @@ function. Deep equality `method` matching enables concise expressivity.
 Contrast this with a traditional `switch` statement that is
 limited by JavaScript's === equality behavior.
 
-    var greatPairs = multimethod()
-          .when( ["Salt", "Pepper"], "Shakers" )
-          .when( [{"name":"Bonnie"}, {"name":"Clyde"}], "Robbers" );
-    console.log( greatPairs( ["Salt", "Pepper"] ) ); // Shakers
+```javascript
+var greatPairs = multimethod()
+      .when( ["Salt", "Pepper"], "Shakers" )
+      .when( [{"name":"Bonnie"}, {"name":"Clyde"}], "Robbers" );
+console.log( greatPairs( ["Salt", "Pepper"] ) ); // Shakers
+```
 
 ## Related Work
 
